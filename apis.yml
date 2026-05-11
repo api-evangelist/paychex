@@ -56,6 +56,28 @@ common:
     url: https://developer.paychex.com/
   - type: Marketplace
     url: https://marketplace.paychex.com/en-US/home
+  - type: Integrations
+    url: https://www.paychex.com/integrations
+integrations:
+  - name: Intuit Quickbooks
+  - name: Sage Intacct
+  - name: Xero
+  - name: Oracle Netsuite
+  - name: Jirav
+  - name: Connecteam
+  - name: SwyftOps
+  - name: When I Work
+  - name: Mindbody
+  - name: 7shifts
+  - name: Employee Navigator
+  - name: Bamboohr
+  - name: Clover
+  - name: Instant Financial
+  - name: goHappy
+  - name: A Paychex customer support person
+  - name: LinkedIn
+  - name: Facebook
+  - name: Youtube
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
