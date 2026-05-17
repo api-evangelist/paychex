@@ -39,7 +39,7 @@ apis:
     properties:
       - type: Documentation
         url: https://developer.paychex.com/documentation
-      - type: Getting Started
+      - type: GettingStarted
         url: https://developer.paychex.com/getting-started/overview
       - type: Use Cases
         url: https://developer.paychex.com/use_cases
