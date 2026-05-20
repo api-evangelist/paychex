@@ -50,6 +50,10 @@ apis:
       - type: Support
         url: https://developer.paychex.com/support
 common:
+  - type: GitHubOrganization
+    url: https://github.com/Paychex
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/paychex
   - type: Website
     url: https://www.paychex.com/
   - type: Developer Portal
