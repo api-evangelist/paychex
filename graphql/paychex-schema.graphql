@@ -1,0 +1,759 @@
+"""
+Paychex GraphQL Schema
+Conceptual schema derived from the Paychex Developer Program REST APIs.
+Source: https://developer.paychex.com/
+"""
+
+# ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum EmployeeStatusCode {
+  ACTIVE
+  INACTIVE
+  TERMINATED
+  ON_LEAVE
+  PENDING
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+}
+
+enum PayFrequencyCode {
+  WEEKLY
+  BIWEEKLY
+  SEMIMONTHLY
+  MONTHLY
+}
+
+enum PhoneType {
+  HOME
+  MOBILE
+  WORK
+  OTHER
+}
+
+enum BankAccountType {
+  CHECKING
+  SAVINGS
+}
+
+enum LeaveTypeCode {
+  VACATION
+  SICK
+  PERSONAL
+  FAMILY_MEDICAL
+  BEREAVEMENT
+  HOLIDAY
+  OTHER
+}
+
+enum DeductionCategory {
+  PRETAX
+  POSTTAX
+  GARNISHMENT
+  VOLUNTARY
+}
+
+enum FilingStatus {
+  SINGLE
+  MARRIED_FILING_JOINTLY
+  MARRIED_FILING_SEPARATELY
+  HEAD_OF_HOUSEHOLD
+  QUALIFYING_WIDOW
+}
+
+enum WebhookEvent {
+  EMPLOYEE_CREATED
+  EMPLOYEE_UPDATED
+  EMPLOYEE_TERMINATED
+  PAY_STATEMENT_CREATED
+  BENEFIT_ENROLLMENT_UPDATED
+  TIME_ENTRY_SUBMITTED
+  ONBOARDING_TASK_COMPLETED
+}
+
+# ─── Scalars ─────────────────────────────────────────────────────────────────
+
+scalar Date
+scalar DateTime
+scalar Currency
+
+# ─── Company & Organization ───────────────────────────────────────────────────
+
+type Company {
+  companyId: ID!
+  name: String!
+  legalName: String
+  federalEIN: String
+  details: CompanyDetails
+  departments: [Department!]
+  costCenters: [CostCenter!]
+  payGroups: [PayGroup!]
+  employees: [Employee!]
+  webhooks: [Webhook!]
+}
+
+type CompanyDetails {
+  companyId: ID!
+  address: EmployeeAddress
+  phone: String
+  industry: String
+  numberOfEmployees: Int
+  stateOfIncorporation: String
+  incorporationDate: Date
+}
+
+type Department {
+  departmentId: ID!
+  name: String!
+  code: String
+  company: Company
+  manager: Manager
+  employees: [Employee!]
+}
+
+type CostCenter {
+  costCenterId: ID!
+  name: String!
+  code: String
+  description: String
+  company: Company
+}
+
+type PayGroup {
+  payGroupId: ID!
+  name: String!
+  frequency: PayFrequency
+  company: Company
+  employees: [Employee!]
+}
+
+type PayFrequency {
+  code: PayFrequencyCode!
+  description: String
+  periodsPerYear: Int
+}
+
+# ─── Employee Core ────────────────────────────────────────────────────────────
+
+type Employee {
+  employeeId: ID!
+  company: Company!
+  status: EmployeeStatus!
+  profile: EmployeeProfile
+  employment: Employment
+  payStatements: [PayStatement!]
+  benefits: Benefits
+  timeOff: TimeOff
+  timeEntries: [TimeEntry!]
+  garnishments: [Garnishment!]
+  onboardingTasks: [OnboardingTask!]
+  directDeposits: [DirectDeposit!]
+}
+
+type EmployeeDetails {
+  employeeId: ID!
+  personalInfo: PersonalInfo
+  contactInfo: ContactInfo
+  emergencyContacts: [EmergencyContact!]
+  ssn: SSN
+}
+
+type EmployeeStatus {
+  code: EmployeeStatusCode!
+  effectiveDate: Date
+  reason: String
+}
+
+type EmployeeProfile {
+  employeeId: ID!
+  fullName: FullName
+  birthDate: BirthDate
+  gender: Gender
+  personalInfo: PersonalInfo
+  homeAddress: HomeAddress
+  contactInfo: ContactInfo
+}
+
+type PersonalInfo {
+  preferredName: String
+  maritalStatus: String
+  citizenship: String
+  ethnicity: String
+  veteranStatus: String
+  disabilityStatus: String
+}
+
+type FullName {
+  firstName: String!
+  middleName: String
+  lastName: String!
+  suffix: String
+  preferredName: String
+}
+
+type BirthDate {
+  date: Date
+  age: Int
+}
+
+# ─── Address & Contact ────────────────────────────────────────────────────────
+
+type HomeAddress {
+  line1: String
+  line2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+}
+
+type EmployeeAddress {
+  line1: String
+  line2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  addressType: String
+}
+
+type ContactInfo {
+  phones: [Phone!]
+  emails: [Email!]
+}
+
+type Phone {
+  phoneId: ID!
+  type: PhoneType!
+  number: String!
+  extension: String
+  primary: Boolean
+}
+
+type Email {
+  emailId: ID!
+  address: String!
+  type: String
+  primary: Boolean
+}
+
+type SSN {
+  lastFour: String
+  encrypted: String
+}
+
+type EmergencyContact {
+  contactId: ID!
+  name: FullName
+  relationship: String
+  phones: [Phone!]
+  email: Email
+  priority: Int
+}
+
+# ─── Employment ───────────────────────────────────────────────────────────────
+
+type Employment {
+  employeeId: ID!
+  hireDate: HireDate
+  terminationDate: TerminationDate
+  position: Position
+  payGroup: PayGroup
+  department: Department
+  costCenter: CostCenter
+  reportsTo: ReportsTo
+  employmentType: String
+  workerCategory: String
+  flsaStatus: String
+}
+
+type HireDate {
+  original: Date
+  rehire: Date
+  adjusted: Date
+}
+
+type TerminationDate {
+  date: Date
+  reason: String
+  voluntarily: Boolean
+  eligible_for_rehire: Boolean
+}
+
+type Position {
+  positionId: ID!
+  jobTitle: JobTitle
+  department: Department
+  location: String
+  effectiveDate: Date
+}
+
+type JobTitle {
+  titleId: ID!
+  name: String!
+  code: String
+  description: String
+}
+
+type Manager {
+  employeeId: ID!
+  fullName: FullName
+  email: Email
+  jobTitle: JobTitle
+}
+
+type ReportsTo {
+  manager: Manager
+  effectiveDate: Date
+}
+
+# ─── Payroll ─────────────────────────────────────────────────────────────────
+
+type PayPeriod {
+  payPeriodId: ID!
+  startDate: Date!
+  endDate: Date!
+  payDate: Date!
+  payGroup: PayGroup
+}
+
+type PayStatement {
+  payStatementId: ID!
+  employee: Employee!
+  payPeriod: PayPeriod!
+  checkDate: Date
+  checkNumber: String
+  earnings: [Earning!]
+  deductions: [Deduction!]
+  taxes: [Tax!]
+  netPay: NetPay
+  directDeposits: [DirectDeposit!]
+  grossPay: Currency
+  ytdGrossPay: Currency
+}
+
+type Earning {
+  earningId: ID!
+  code: EarningCode
+  description: String
+  hours: Float
+  rate: Currency
+  amount: Currency!
+  ytdAmount: Currency
+}
+
+type EarningCode {
+  code: String!
+  description: String
+  earningType: String
+  taxable: Boolean
+}
+
+type Deduction {
+  deductionId: ID!
+  code: DeductionCode
+  description: String
+  amount: Currency!
+  ytdAmount: Currency
+  category: DeductionCategory
+  employerContribution: Currency
+}
+
+type DeductionCode {
+  code: String!
+  description: String
+  category: DeductionCategory
+}
+
+type NetPay {
+  amount: Currency!
+  ytdAmount: Currency
+}
+
+# ─── Tax ─────────────────────────────────────────────────────────────────────
+
+type Tax {
+  taxId: ID!
+  description: String
+  amount: Currency!
+  ytdAmount: Currency
+  employerAmount: Currency
+  taxType: String
+  jurisdiction: String
+}
+
+type FederalTax {
+  filingStatus: FilingStatus
+  allowances: Int
+  additionalWithholding: Currency
+  exemptFromWithholding: Boolean
+  w4Year: Int
+}
+
+type StateTax {
+  state: String!
+  filingStatus: String
+  allowances: Int
+  additionalWithholding: Currency
+  exemptFromWithholding: Boolean
+}
+
+type LocalTax {
+  locality: String!
+  taxCode: String
+  amount: Currency
+  ytdAmount: Currency
+}
+
+# ─── Banking ─────────────────────────────────────────────────────────────────
+
+type DirectDeposit {
+  depositId: ID!
+  bankAccount: BankAccount
+  amount: Currency
+  percentage: Float
+  priority: Int
+  wholeCheck: Boolean
+  effectiveDate: Date
+}
+
+type BankAccount {
+  accountId: ID!
+  routingNumber: String!
+  accountNumberLastFour: String
+  accountType: BankAccountType!
+  bankName: String
+  verified: Boolean
+}
+
+# ─── Benefits ────────────────────────────────────────────────────────────────
+
+type Benefits {
+  employeeId: ID!
+  enrollments: [BenefitEnrollment!]
+  plans: [BenefitPlan!]
+}
+
+type BenefitPlan {
+  planId: ID!
+  name: String!
+  planType: String
+  carrier: String
+  planYear: Int
+  employeeContribution: Currency
+  employerContribution: Currency
+  description: String
+}
+
+type BenefitEnrollment {
+  enrollmentId: ID!
+  employee: Employee!
+  plan: BenefitPlan!
+  coverageLevel: String
+  effectiveDate: Date
+  terminationDate: Date
+  dependents: [String]
+  employeeContribution: Currency
+  employerContribution: Currency
+  enrollmentStatus: String
+}
+
+# ─── Time & Attendance ────────────────────────────────────────────────────────
+
+type TimeOff {
+  employeeId: ID!
+  balances: [LeaveBalance!]
+  requests: [TimeOffRequest!]
+}
+
+type LeaveType {
+  leaveTypeId: ID!
+  code: LeaveTypeCode!
+  name: String!
+  description: String
+  paidLeave: Boolean
+  accrualEnabled: Boolean
+}
+
+type LeaveBalance {
+  leaveType: LeaveType!
+  available: Float
+  used: Float
+  pending: Float
+  accrued: Float
+  carryOver: Float
+  asOfDate: Date
+}
+
+type TimeOffRequest {
+  requestId: ID!
+  employee: Employee
+  leaveType: LeaveType
+  startDate: Date!
+  endDate: Date!
+  hours: Float
+  status: String
+  approver: Manager
+  notes: String
+}
+
+type TimeEntry {
+  entryId: ID!
+  employee: Employee!
+  date: Date!
+  clockIn: DateTime
+  clockOut: DateTime
+  workHours: WorkHours
+  approved: Boolean
+  approvedBy: Manager
+  notes: String
+}
+
+type WorkHours {
+  regular: Float
+  overtime: OvertimeHours
+  holiday: HolidayHours
+  sick: SickHours
+  vacation: VacationHours
+  total: Float
+}
+
+type OvertimeHours {
+  hours: Float
+  rate: Float
+  amount: Currency
+}
+
+type HolidayHours {
+  hours: Float
+  holidayName: String
+  date: Date
+}
+
+type SickHours {
+  hours: Float
+  leaveBalance: LeaveBalance
+}
+
+type VacationHours {
+  hours: Float
+  leaveBalance: LeaveBalance
+}
+
+# ─── Garnishments ────────────────────────────────────────────────────────────
+
+type Garnishment {
+  garnishmentId: ID!
+  employee: Employee!
+  type: String!
+  amount: Currency
+  percentage: Float
+  issuingAuthority: String
+  caseNumber: String
+  effectiveDate: Date
+  endDate: Date
+  active: Boolean
+}
+
+type ChildSupport {
+  garnishmentId: ID!
+  employee: Employee!
+  caseNumber: String!
+  issuingState: String
+  obligeeName: String
+  amount: Currency!
+  frequency: String
+  effectiveDate: Date
+  endDate: Date
+  fipsCode: String
+}
+
+# ─── Onboarding ───────────────────────────────────────────────────────────────
+
+type OnboardingTask {
+  taskId: ID!
+  employee: Employee!
+  name: String!
+  description: String
+  dueDate: Date
+  completedDate: Date
+  status: String
+  required: Boolean
+  assignedTo: String
+}
+
+type NewHireDocument {
+  documentId: ID!
+  employee: Employee!
+  documentType: String!
+  name: String!
+  uploadedDate: DateTime
+  status: String
+  url: String
+}
+
+type I9 {
+  documentId: ID!
+  employee: Employee!
+  section1CompletedDate: Date
+  section2CompletedDate: Date
+  listADocuments: [String]
+  listBDocuments: [String]
+  listCDocuments: [String]
+  employerName: String
+  employerSignatureDate: Date
+  everifyStatus: String
+  everifyCaseNumber: String
+}
+
+type W4 {
+  documentId: ID!
+  employee: Employee!
+  federalTax: FederalTax
+  stateTaxes: [StateTax!]
+  signedDate: Date
+  effectiveDate: Date
+}
+
+type DirectDepositForm {
+  formId: ID!
+  employee: Employee!
+  directDeposits: [DirectDeposit!]
+  signedDate: Date
+  effectiveDate: Date
+  status: String
+}
+
+# ─── API Access & Webhooks ────────────────────────────────────────────────────
+
+type APIKey {
+  keyId: ID!
+  name: String
+  createdAt: DateTime
+  expiresAt: DateTime
+  scopes: [String!]
+  active: Boolean
+}
+
+type OAuthToken {
+  tokenId: ID!
+  clientId: String!
+  scope: String
+  issuedAt: DateTime
+  expiresAt: DateTime
+  tokenType: String
+}
+
+type Webhook {
+  webhookId: ID!
+  url: String!
+  event: WebhookEvent!
+  active: Boolean!
+  secret: String
+  createdAt: DateTime
+  lastTriggered: DateTime
+  company: Company
+}
+
+# ─── Query Root ───────────────────────────────────────────────────────────────
+
+type Query {
+  company(companyId: ID!): Company
+  companies: [Company!]
+
+  employee(employeeId: ID!): Employee
+  employees(companyId: ID!, status: EmployeeStatusCode): [Employee!]
+  employeeDetails(employeeId: ID!): EmployeeDetails
+
+  payStatement(payStatementId: ID!): PayStatement
+  payStatements(employeeId: ID!, startDate: Date, endDate: Date): [PayStatement!]
+
+  payPeriod(payPeriodId: ID!): PayPeriod
+  payPeriods(payGroupId: ID!, year: Int): [PayPeriod!]
+
+  benefitPlans(companyId: ID!): [BenefitPlan!]
+  benefitEnrollments(employeeId: ID!): [BenefitEnrollment!]
+
+  timeEntries(employeeId: ID!, startDate: Date, endDate: Date): [TimeEntry!]
+  timeOff(employeeId: ID!): TimeOff
+  leaveBalances(employeeId: ID!): [LeaveBalance!]
+
+  garnishments(employeeId: ID!): [Garnishment!]
+  onboardingTasks(employeeId: ID!): [OnboardingTask!]
+
+  webhooks(companyId: ID!): [Webhook!]
+}
+
+# ─── Mutation Root ────────────────────────────────────────────────────────────
+
+type Mutation {
+  createEmployee(companyId: ID!, input: EmployeeInput!): Employee
+  updateEmployee(employeeId: ID!, input: EmployeeInput!): Employee
+  terminateEmployee(employeeId: ID!, terminationDate: Date!, reason: String): Employee
+
+  addDirectDeposit(employeeId: ID!, input: DirectDepositInput!): DirectDeposit
+  removeDirectDeposit(depositId: ID!): Boolean
+
+  submitTimeEntry(employeeId: ID!, input: TimeEntryInput!): TimeEntry
+  approveTimeEntry(entryId: ID!): TimeEntry
+
+  requestTimeOff(employeeId: ID!, input: TimeOffRequestInput!): TimeOffRequest
+  approveTimeOffRequest(requestId: ID!): TimeOffRequest
+
+  enrollInBenefit(employeeId: ID!, planId: ID!, input: BenefitEnrollmentInput!): BenefitEnrollment
+
+  createWebhook(companyId: ID!, url: String!, event: WebhookEvent!): Webhook
+  deleteWebhook(webhookId: ID!): Boolean
+
+  completeOnboardingTask(taskId: ID!): OnboardingTask
+  uploadNewHireDocument(employeeId: ID!, documentType: String!, url: String!): NewHireDocument
+}
+
+# ─── Input Types ─────────────────────────────────────────────────────────────
+
+input EmployeeInput {
+  firstName: String!
+  lastName: String!
+  email: String
+  hireDate: Date
+  jobTitleId: ID
+  departmentId: ID
+  payGroupId: ID
+}
+
+input DirectDepositInput {
+  routingNumber: String!
+  accountNumber: String!
+  accountType: BankAccountType!
+  amount: Currency
+  percentage: Float
+  wholeCheck: Boolean
+  priority: Int
+}
+
+input TimeEntryInput {
+  date: Date!
+  clockIn: DateTime
+  clockOut: DateTime
+  regularHours: Float
+  overtimeHours: Float
+  notes: String
+}
+
+input TimeOffRequestInput {
+  leaveTypeId: ID!
+  startDate: Date!
+  endDate: Date!
+  hours: Float
+  notes: String
+}
+
+input BenefitEnrollmentInput {
+  coverageLevel: String!
+  effectiveDate: Date!
+  dependents: [String]
+}
