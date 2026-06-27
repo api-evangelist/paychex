@@ -38,7 +38,7 @@ apis:
     url: https://developer.paychex.com/documentation
   - type: GettingStarted
     url: https://developer.paychex.com/getting-started/overview
-  - type: Use Cases
+  - type: UseCases
     url: https://developer.paychex.com/use_cases
   - type: Developer Resources
     url: https://developer.paychex.com/resources/overview
@@ -55,7 +55,7 @@ common:
   url: https://www.linkedin.com/company/paychex
 - type: Website
   url: https://www.paychex.com/
-- type: Developer Portal
+- type: DeveloperPortal
   url: https://developer.paychex.com/
 - type: Marketplace
   url: https://marketplace.paychex.com/en-US/home
