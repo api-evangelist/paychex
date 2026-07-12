@@ -49,6 +49,8 @@ apis:
   - url: graphql/paychex-graphql.md
     type: GraphQL
 common:
+- type: DomainSecurity
+  url: security/paychex-domain-security.yml
 - type: GitHubOrganization
   url: https://github.com/Paychex
 - type: LinkedIn
@@ -61,6 +63,8 @@ common:
   url: https://marketplace.paychex.com/en-US/home
 - type: Integrations
   url: https://www.paychex.com/integrations
+- type: Blog
+  url: https://www.paychex.com/newsroom/news-releases
 integrations:
 - name: Intuit Quickbooks
 - name: Sage Intacct
