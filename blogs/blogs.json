@@ -1,0 +1,21 @@
+{
+  "repo": "paychex",
+  "feeds": [
+    {
+      "source": "https://www.paychex.com/newsroom/news-releases",
+      "feed_url": "https://www.paychex.com/newsroom/news-releases",
+      "title": "",
+      "saved": 0,
+      "method": "none"
+    },
+    {
+      "source": "https://www.paychex.com/integrations",
+      "feed_url": "https://www.paychex.com/integrations",
+      "title": "",
+      "saved": 0,
+      "method": "none"
+    }
+  ],
+  "fetched": "2026-07-11T11:50:51Z",
+  "post_count": 21
+}
