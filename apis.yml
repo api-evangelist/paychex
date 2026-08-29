@@ -5,6 +5,17 @@ description: Paychex is a provider of payroll, human resources, retirement, and 
   to automate, standardize, and simplify integrations with Paychex products covering
   workers, companies, payroll, time and attendance, and related HR data.
 type: Index
+deliveryModel:
+  model: unknown
+  open_source: false
+  commercial: false
+  callable_host: false
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
+  source:
+  - none
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: unknown
