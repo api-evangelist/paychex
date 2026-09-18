@@ -34,6 +34,12 @@ image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/paychex.pn
 tags:
 - Payroll
 - Human Resources
+- Benefits
+- Time and Attendance
+- Fortune 1000
+tags_raw:
+- Payroll
+- Human Resources
 - HR
 - Benefits
 - Time and Attendance
@@ -51,6 +57,11 @@ apis:
     Program.
   humanURL: https://developer.paychex.com/
   tags:
+  - Payroll
+  - Human Resources
+  - Benefits
+  - Time and Attendance
+  tags_raw:
   - Payroll
   - Human Resources
   - HR
